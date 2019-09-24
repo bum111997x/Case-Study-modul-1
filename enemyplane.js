@@ -1,25 +1,26 @@
-let EnemyPlane = function (speed, xEnemy, yEnemy) {
-    this.xEnemy = xEnemy;
-    this.yEnemy = yEnemy;
+let EnemyPlane = function (speed, x, y) {
+    this.x = x;
+    this.y = y;
     this.speed = speed;
-    this.size = 25;
+    this.size = 15;
+    this.color = getRandomColor();
 
     this.getX = function () {
-        return this.xEnemy;
+        return this.x;
     };
 
     this.getY = function () {
-        return this.yEnemy;
+        return this.y;
     };
 
     this.move = function () {
-        this.yEnemy += this.speed;
+        this.y += this.speed;
     };
 
     this.draw = function () {
         ctx.beginPath();
-        ctx.arc(this.xEnemy, this.yEnemy, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = "red";
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
         ctx.fill();
     }
 };

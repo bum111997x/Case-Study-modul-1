@@ -1,10 +1,11 @@
 let plane = new MyPlane(5, 175, 430);
 let enemies = [];
 let bulletes = [];
+let score = 0;
 
 function createEnemy() {
     let num = Math.floor(Math.random() * 1000);
-    if (num < 10) {
+    if (num < 50) {
         let enemy = new EnemyPlane(1, Math.floor(Math.random() * 350) + 30, -10);
         enemies.push(enemy);
     }
@@ -12,51 +13,58 @@ function createEnemy() {
 
 function showEnemies() {
     for (let i = 0; i < enemies.length; i++) {
-        if (enemies[i].yEnemy > 550) {
-            enemies.splice(i, 1);
-        } else {
-            enemies[i].move();
-            enemies[i].draw();
-        }
+        enemies[i].move();
+        enemies[i].draw();
     }
 }
 
 function createBulletes() {
-    let bullet = new Bulletes(15, plane.xPlane + 25, 430);
+    let reload = 5;
+    let count = 0;
+    let bullet = new Bulletes(10, (plane.x + 25), 430);
     bulletes.push(bullet);
     for (let i = 0; i < bulletes.length; i++) {
-        if (i % 50 === 0) {
-            bulletes[i].move();
-            bulletes[i].drawBullet();
-        }
+        bulletes[i].move();
+        bulletes[i].drawBullet();
     }
 }
 
-function vacham() {
+function crash(obj1, obj2) {
+    let top1 = obj1.y;
+    let bottom1 = obj1.y + obj1.size;
+    let left1 = obj1.x - obj1.size;
+    let right1 = obj1.x + obj1.size;
+    let top2 = obj2.y;
+    let bottom2 = obj2.y + obj2.size;
+    let left2 = obj2.x - obj2.size;
+    let right2 = obj2.x + obj2.size;
+    if (left1 <= right2 && right1 > left2 && top1 <= bottom2 && bottom1 > top2) {
+        return true;
+    }
+}
+
+function bulletVsEnemy() {
     for (let i = 0; i < enemies.length; i++) {
         for (let j = 0; j < bulletes.length; j++) {
-            if (bulletes[j].xBullet <= enemies[i].xEnemy + enemies[i].size * 2 &&
-                bulletes[j].yBullet <= enemies[i].yEnemy + enemies[i].size * 2 &&
-                bulletes[j].xBullet + bulletes[j].size * 2 >= enemies[i].xEnemy &&
-                bulletes[j].yBullet + bulletes[j].size * 2 >= enemies[i].yEnemy) {
+            if (crash(bulletes[j], enemies[i])) {
                 enemies.splice(i, 1);
                 bulletes.splice(j, 1);
+                score += 1;
                 break;
             }
         }
     }
 }
 
-// function vacham1() {
-//     for (let i = 0; i < enemies.length; i++) {
-//         if (plane.xPlane <= enemies[i].xEnemy + enemies[i].size * 2 &&
-//             plane.xPlane + plane.size >= enemies[i].xEnemy &&
-//             plane.yPlane <= enemies[i].yPlane + enemies[i].size * 2 &&
-//             plane.yPlane + plane.size >= enemies[i].yPlane) {
-//             ctx.clearRect(plane.xPlane,plane.yPlane,plane.size,plane,size);
-//         }
-//     }
-// }
+function planeVsEnemy() {
+    for (let i = 0; i < enemies.length; i++) {
+        if (crash(plane, enemies[i])) {
+            document.write("Điểm của bạn là: " + score);
+            alert("You lose!");
+        }
+    }
+}
+
 
 function control() {
     window.addEventListener('keydown', dichuyen);
@@ -81,6 +89,17 @@ function clearScreen() {
     ctx.clearRect(0, 0, 400, 500);
 }
 
+function getRandomHex() {
+    return Math.floor(Math.random() * 255);
+}
+
+function getRandomColor() {
+    let red = getRandomHex();
+    let yellow = getRandomHex();
+    let blue = getRandomHex();
+    return "rgb(" + red + "," + yellow + "," + blue + ")";
+}
+
 function main() {
     clearScreen();
     createEnemy();
@@ -88,8 +107,8 @@ function main() {
     createBulletes();
     plane.drawPlane();
     control(plane);
-    vacham();
-    // vacham1();
+    bulletVsEnemy();
+    planeVsEnemy();
     requestAnimationFrame(main);
 }
 
