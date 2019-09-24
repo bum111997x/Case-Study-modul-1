@@ -6,7 +6,7 @@ let score = 0;
 function createEnemy() {
     let num = Math.floor(Math.random() * 1000);
     if (num < 50) {
-        let enemy = new EnemyPlane(1, Math.floor(Math.random() * 350) + 30, -10);
+        let enemy = new EnemyPlane(20, Math.floor(Math.random() * 350) + 30, -10);
         enemies.push(enemy);
     }
 }
